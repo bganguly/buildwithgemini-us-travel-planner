@@ -178,51 +178,44 @@ def get_scenic_route_highlights(route_name: str) -> dict[str, Any]:
 # Tool 3: generate_destination_image
 # ---------------------------------------------------------------------------
 def generate_destination_image(destination_name: str, caption: str = "") -> dict[str, Any]:
-    """Generate a custom scenic postcard graphic for a destination and publish it to public Cloud Storage.
+    """Generate a real scenic photograph for a destination using gemini-3.1-flash-lite-image and publish to public Cloud Storage.
 
     Args:
         destination_name: Name of the destination or landmark (e.g. 'Utah Scenic Byway 12', 'Zion National Park', 'Grand Canyon').
-        caption: Optional subtitle or motto (e.g. 'Red Rock Highway Scenic Adventure').
+        caption: Optional subtitle or description context.
 
     Returns:
         Public image URL and Markdown snippet ready to embed in response cards.
     """
-    # Create a stylish high-res postcard card graphic (800x450)
-    img = Image.new("RGB", (800, 450), color=(26, 36, 43))  # Dark sleek slate
-    draw = ImageDraw.Draw(img)
+    from google import genai
 
-    # Decorative header banner (Terracotta/Red Rock gradient-style bar)
-    draw.rectangle([0, 0, 800, 12], fill=(217, 83, 30))
-    draw.rectangle([0, 438, 800, 450], fill=(217, 83, 30))
+    client = genai.Client(vertexai=True, project=PROJECT_ID, location="global")
+    prompt = f"A professional high-resolution photograph of {destination_name}. {caption or 'Scenic motorcycle travel road trip destination with stunning natural landscapes and scenic vistas.'}"
 
-    # Inner card frame
-    draw.rectangle([30, 30, 770, 420], outline=(230, 126, 34), width=3)
+    response = client.models.generate_content(
+        model="gemini-3.1-flash-lite-image",
+        contents=prompt,
+    )
 
-    # Subdued mountain/highway decorative lines
-    draw.polygon([(100, 350), (250, 180), (400, 350)], fill=(44, 62, 80))
-    draw.polygon([(300, 350), (500, 140), (700, 350)], fill=(52, 73, 94))
-    draw.polygon([(200, 380), (400, 260), (600, 380)], fill=(211, 84, 0))
+    image_bytes = None
+    for candidate in response.candidates or []:
+        for part in candidate.content.parts or []:
+            if part.inline_data and part.inline_data.data:
+                image_bytes = part.inline_data.data
+                break
+        if image_bytes:
+            break
 
-    # Text overlays
-    draw.text((60, 60), "US SCENIC VOYAGE POSTCARD", fill=(230, 126, 34))
-    draw.text((60, 100), destination_name.upper(), fill=(255, 255, 255))
+    if not image_bytes:
+        return {"status": "error", "message": f"Failed to generate photo for {destination_name}"}
 
-    subtext = caption or f"Explore {destination_name} | Scenic Motorcycle & Road Trip Destination"
-    draw.text((60, 385), subtext, fill=(189, 195, 199))
-
-    # Save to byte buffer
-    buffer = io.BytesIO()
-    img.save(buffer, format="JPEG", quality=90)
-    buffer.seek(0)
-
-    # Upload to GCS
     slug = re.sub(r"[^a-zA-Z0-9_]", "_", destination_name.lower().strip())
     filename = f"postcards/{slug}_postcard.jpg"
 
     storage_client = storage.Client(project=PROJECT_ID)
     bucket = storage_client.bucket(BUCKET_NAME)
     blob = bucket.blob(filename)
-    blob.upload_from_file(buffer, content_type="image/jpeg")
+    blob.upload_from_string(image_bytes, content_type="image/jpeg")
 
     public_url = f"https://storage.googleapis.com/{BUCKET_NAME}/{filename}"
     markdown_embed = f"![{destination_name}]({public_url})"

@@ -115,16 +115,22 @@ async def _get_card(client: httpx.AsyncClient) -> AgentCard:
     return _card
 
 
+import re
+import time
+
 BUCKET_NAME = "us-travel-planner-media-qwiklabs-04"
 
 
 def _resolve_image_url(url_or_path: str) -> str:
     if not url_or_path:
         return url_or_path
+    ts = int(time.time())
     if url_or_path.startswith("http://") or url_or_path.startswith("https://"):
+        if "storage.googleapis.com" in url_or_path and "?v=" not in url_or_path and "?t=" not in url_or_path:
+            return f"{url_or_path}?v={ts}"
         return url_or_path
     clean_path = url_or_path.lstrip("/")
-    return f"https://storage.googleapis.com/{BUCKET_NAME}/{clean_path}"
+    return f"https://storage.googleapis.com/{BUCKET_NAME}/{clean_path}?v={ts}"
 
 
 def _extract_parts(parts: list) -> list[dict]:
@@ -147,7 +153,10 @@ def _extract_parts(parts: list) -> list[dict]:
                 full_url = _resolve_image_url(text)
                 out.append({"kind": "text", "text": f"![Image]({full_url})"})
             else:
-                out.append({"kind": "text", "text": text})
+                def _cb(m):
+                    return _resolve_image_url(m.group(0))
+                text_cb = re.sub(r"https://storage\.googleapis\.com/[^\s\)\"]+", _cb, text)
+                out.append({"kind": "text", "text": text_cb})
         elif getattr(root, "data", None) is not None:
             meta = getattr(root, "metadata", None) or {}
             mime = meta.get("mimeType") if isinstance(meta, dict) else None
