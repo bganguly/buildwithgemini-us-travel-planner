@@ -1,7 +1,12 @@
-# simple-agent
+# US Travel & Motorcycle Planner (US Voyage Concierge)
 
-Simple ReAct agent
-Agent generated with `agents-cli` version `1.2.1`
+A conversational travel planner agent built with Google ADK, Vertex AI Agent Runtime, and Gemini 2.5/3.1. It features rich A2UI cards, route planning, budget estimation, local bike/motorcycle rental options, and real-time AI-generated destination photography.
+
+## 🌐 Live Application Endpoints
+
+* **🚀 Live Cloud Run Frontend:** [https://us-travel-planner-frontend-313999655048.us-east1.run.app](https://us-travel-planner-frontend-313999655048.us-east1.run.app)
+* **💻 Local Development Server:** `http://localhost:8085` (Local FastAPI Proxy & Chat Interface)
+* **⚙️ Deployed Agent Runtime ID:** `projects/313999655048/locations/us-east1/reasoningEngines/4212783199870255104`
 
 ## Project Structure
 
