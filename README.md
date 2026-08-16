@@ -11,7 +11,7 @@ on Vertex AI Agent Runtime with a Cloud Run frontend.
 
 | Endpoint | URL |
 |---|---|
-| **Frontend (Cloud Run)** | https://us-travel-planner-frontend-313999655048.us-east1.run.app |
+| **Frontend (Cloud Run)** | `https://us-travel-planner-frontend-313999655048.us-east1.run.app` (ECR removed at the end of the sandbox demo) |
 | **Local dev server** | `http://localhost:8085` (FastAPI proxy + chat UI) |
 | **Agent Runtime ID** | `projects/313999655048/locations/us-east1/reasoningEngines/4212783199870255104` |
 | **Media bucket** | `gs://us-travel-planner-media-qwiklabs-04` (public read) |
