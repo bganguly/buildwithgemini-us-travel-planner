@@ -56,7 +56,7 @@ def create_corpus():
             chunking_config=rag.ChunkingConfig(chunk_size=512, chunk_overlap=100)
         ),
         llm_parser=rag.LlmParserConfig(
-            model_name="gemini-2.5-flash",
+            model_name="gemini-3.6-flash",
             custom_parsing_prompt=PARSING_PROMPT,
         ),
     )

@@ -41,7 +41,7 @@ on Vertex AI Agent Runtime with a Cloud Run frontend.
 | **Model** | gemini-3.6-flash (conversation + tool routing); gemini-3.1-flash-lite-image (image generation) |
 | **Session & memory** | Vertex AI Session Service + Vertex AI Memory Bank (cross-session user preference recall) |
 | **Code execution** | `AgentEngineSandboxCodeExecutor` — Python sandbox on the Reasoning Engine for budget math |
-| **RAG** | Vertex AI Serverless RAG corpus (`text-embedding-005`); `LlmParserConfig` with gemini-2.5-flash + custom extraction prompt; 512-token chunks, 100-token overlap |
+| **RAG** | Vertex AI Serverless RAG corpus (`text-embedding-005`); `LlmParserConfig` with gemini-3.6-flash + custom extraction prompt; 512-token chunks, 100-token overlap |
 | **Firestore** | `motorcycle_rentals` collection — city/type-filtered reads + upserts via ADK tools |
 | **GCS** | Public bucket `us-travel-planner-media-qwiklabs-04`; subfolders: `generated_items/`, `postcards/`, `stock/`, `rag/` |
 | **A2A protocol** | Full A2A JSON-RPC + agent-card endpoints via `a2a-sdk`; streaming + ADK executor extension |
@@ -136,7 +136,7 @@ Open `http://localhost:8085` to chat with the agent.
 |---|---|
 | **Cross-session memory** | `PreloadMemoryTool` injects recalled user facts (budget, riding level, departure city) into every turn — no explicit "remember this" prompt needed |
 | **Image delivery** | AI-generated images are uploaded to a public GCS bucket and returned as HTTPS URLs — no base64 in the chat response, frontend renders them inline |
-| **RAG parsing** | `LlmParserConfig` with gemini-2.5-flash extracts structured travel rules from free-text docs, improving retrieval precision over naive chunking |
+| **RAG parsing** | `LlmParserConfig` with gemini-3.6-flash extracts structured travel rules from free-text docs, improving retrieval precision over naive chunking |
 | **Sandbox budget math** | `AgentEngineSandboxCodeExecutor` runs Python arithmetic in an isolated environment — avoids hallucinated totals from pure LLM arithmetic |
 | **Shared services** | `services.py` registers session, memory, and artifact services under `shared://` URIs so the ADK API, A2A path, and Reasoning Engine adapter share one consistent state |
 | **A2A interoperability** | All agent capabilities are exposed on the A2A JSON-RPC path (`/a2a/app`), allowing other agents or Gemini Enterprise to call this agent as a sub-agent |
