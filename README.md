@@ -2,12 +2,10 @@
 
 > **Note:** This project was coded as part of a Qwiklabs demo using the gcloud shell environment and has not been tested via a local run on macOS. YMMV.
 
-Production-grade **Google ADK + Gemini 2.5** conversational agent that plans multi-day US road trips
+Production-grade **Google ADK + Gemini 3.6** conversational agent that plans multi-day US road trips
 and motorcycle routes: live rental lookup via Firestore, trip budget sandboxing, RAG-backed travel
 guidelines, real-time AI-generated destination photography, and full A2A protocol support. Deployed
 on Vertex AI Agent Runtime with a Cloud Run frontend.
-
-![Zion National Park](https://storage.googleapis.com/us-travel-planner-media-qwiklabs-04/stock/zion_national_park.jpg)
 
 ## Live Service
 
